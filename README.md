@@ -1,4 +1,4 @@
-# Check Point Management - Elixir Wrapper
+# Check Point Management - Elixir
 
 ## Installation
 
