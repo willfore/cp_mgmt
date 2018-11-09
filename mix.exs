@@ -11,7 +11,7 @@ defmodule CpMgmt.MixProject do
       description: description(),
       package: package(),
       deps: deps(),
-      name: "Check Point Management API",
+      name: "Check Point Management API Wrapper - Elixir",
       source_url: ""
     ]
   end

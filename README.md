@@ -1,6 +1,4 @@
-# CpMgmt
-
-**TODO: Add description**
+# Check Point Management - Elixir Wrapper
 
 ## Installation
 
@@ -10,7 +8,7 @@ by adding `cp_mgmt` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:cp_mgmt, "~> 0.1.0"}
+    {:cp_mgmt, "~> 0.0.1"}
   ]
 end
 ```
