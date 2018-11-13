@@ -5,9 +5,6 @@ defmodule CpMgmtTest do
 
   setup do
     mock(fn
-      %{method: :get, url: "http://example.com/hello"} ->
-        %Tesla.Env{status: 200, body: "hello"}
-
       %{method: :post, url: "http://example.com/world"} ->
         json(%{"my" => "data"})
 
@@ -22,7 +19,8 @@ defmodule CpMgmtTest do
 
       %{
         method: :post,
-        url: "http://example.com/web_api/login/pass"
+        url: "http://example.com/web_api/login/pass",
+        body: [{"user", "admin"}, {"password", "vpn123"}]
       } ->
         %Tesla.Env{
           status: 200,
@@ -43,27 +41,10 @@ defmodule CpMgmtTest do
     :ok
   end
 
-  test "list things" do
-    assert {:ok, %Tesla.Env{} = env} = Tesla.get("http://example.com/hello")
-    assert env.status == 200
-    assert env.body == "hello"
-  end
-
   test "login failed" do
-    assert {:ok, %Tesla.Env{} = env} =
-             Tesla.post("http://example.com/web_api/login", %{user: "me", password: "test"})
+    assert {:ok, resp} = CpMgmt.login()
+    # Tesla.login("http://example.com/web_api/login", %{user: "me", password: "test"})
 
-    assert env.status == 403
-  end
-
-  test "login successful" do
-    assert {:ok, %Tesla.Env{} = env} =
-             Tesla.post("http://example.com/web_api/login/pass", %{
-               user: "admin",
-               password: "test"
-             })
-
-    assert env.status == 200
-    assert env.body["sid"] == "OZs3Otw29wTF9sB_tLRNpNaJ_Al8u2LyBQMCp73fwoY"
+    assert resp.status == 403
   end
 end

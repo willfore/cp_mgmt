@@ -15,15 +15,18 @@ defmodule CpMgmt do
       iex> CpMgmt.login
       {:ok,
         %{
-          "api-server-version" => "1.3",
-          "last-login-was-at" => %{
-            "iso-8601" => "2018-11-13T11:06-0600",
-            "posix" => 1542128764233
+          body: %{
+            "api-server-version" => "1.3",
+            "last-login-was-at" => %{
+              "iso-8601" => "2018-11-13T15:37-0600",
+              "posix" => 1542145054413
+            },
+            "session-timeout" => 600,
+            "sid" => "ZXr5cyMAKb4PK_rozKhcTU7E53Uj80xU3NCr6mEzkaY",
+            "uid" => "b9e0d483-164d-405e-96bd-4932da37d496",
+            "url" => "https://example.com/web_api"
           },
-          "session-timeout" => 600,
-          "sid" => "t1GtzEMKvOgHG6snD-V2N_tdjbdLX4mnNg2oqgUOX0Q",
-          "uid" => "f6329b50-7890-4929-a6e6-6d5a67c726d6",
-          "url" => "https://example.com/web_api"
+          status: 200
         }}
 
       iex> CpMgmt.login
@@ -37,13 +40,42 @@ defmodule CpMgmt do
     case post("/web_api/login", %{user: user, password: pass}) do
       {:ok, response} ->
         %Tesla.Env{body: body} = response
+        %Tesla.Env{status: status} = response
 
         Application.put_env(:cp_mgmt, :sid, body["sid"], timeout: 600)
         Application.put_env(:cp_mgmt, :uid, body["uid"], timeout: 600)
-        {:ok, body}
+        {:ok, %{status: status, body: body}}
 
       {:error, error} ->
         {:error, "Login returned a #{error}"}
+    end
+  end
+
+  @doc """
+  Runs the logout function to the management API. Unregisters the :sid and :uid from the env.
+
+  ## Examples
+
+    iex> CpMgmt.logout
+    {:ok, %{body: %{"message" => "OK"}, status: 200}}
+
+    iex> CpMgmt.logout
+    {:error, %{error}}
+  """
+  def logout do
+    sid = Application.get_env(:cp_mgmt, :sid)
+
+    case post("/web_api/logout", %{}, headers: [{"X-chkp-sid", sid}]) do
+      {:ok, response} ->
+        %Tesla.Env{body: body} = response
+        %Tesla.Env{status: status} = response
+
+        Application.delete_env(:cp_mgmt, :sid)
+        Application.delete_env(:cp_mgmt, :uid)
+        {:ok, %{status: status, body: body}}
+
+      {:error, error} ->
+        {:error, "Logout returned #{error}"}
     end
   end
 end
