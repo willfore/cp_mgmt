@@ -8,14 +8,6 @@ use Mix.Config
 # if you want to provide default values for your application for
 # 3rd-party users, it should be done in your "mix.exs" file.
 
-# below storest the parameters to your first login for re-use with other commands
-config :cp_mgmt, :api,
-  sid: "",
-  uid: "",
-  timeout: 600
-
-config :tesla, adapter: Tesla.Adapter.Hackney
-
 # You can configure your application as:
 #
 #     config :cp_mgmt, key: :value
