@@ -7,9 +7,6 @@ jobs:
       - image: elixir:latest
         environment:
           MIX_ENV: test
-      - image: postgres:9.5.3
-        environment:
-          POSTGRES_USER: ubuntu
     steps:
       - checkout
       - run: mix local.hex --force
@@ -42,7 +39,6 @@ jobs:
       - save_cache:
           key: v1-build-cache
           paths: "_build"
-      - run: mix ecto.create
       - run: mix test
 
       - store_test_results:
