@@ -30,7 +30,17 @@ defmodule CpMgmt do
         }}
 
       iex> CpMgmt.login
-      {:error, %{error}}
+      {:error,
+        %{
+          body: %{
+            "code" => "err_login_failed",
+            "message" => "Authentication to server failed."
+          },
+          status: 403
+        }}
+
+      iex> CpMgmt.login
+      {:error, some_network_error}
 
   """
   def login do
@@ -42,9 +52,15 @@ defmodule CpMgmt do
         %Tesla.Env{body: body} = response
         %Tesla.Env{status: status} = response
 
-        Application.put_env(:cp_mgmt, :sid, body["sid"], timeout: 600)
-        Application.put_env(:cp_mgmt, :uid, body["uid"], timeout: 600)
-        {:ok, %{status: status, body: body}}
+        case status do
+          200 ->
+            Application.put_env(:cp_mgmt, :sid, body["sid"], timeout: 600)
+            Application.put_env(:cp_mgmt, :uid, body["uid"], timeout: 600)
+            {:ok, %{status: status, body: body}}
+
+          _ ->
+            {:error, %{status: status, body: body}}
+        end
 
       {:error, error} ->
         {:error, "Login returned a #{error}"}

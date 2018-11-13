@@ -42,7 +42,7 @@ defmodule CpMgmtTest do
   end
 
   test "login failed" do
-    assert {:ok, resp} = CpMgmt.login()
+    assert {:error, resp} = CpMgmt.login()
     # Tesla.login("http://example.com/web_api/login", %{user: "me", password: "test"})
 
     assert resp.status == 403
