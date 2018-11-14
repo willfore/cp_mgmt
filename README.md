@@ -37,7 +37,7 @@ You can login and out of your management server by using the following:
 
 ## Working with Hosts
 
-Currently we provide the ability to add, remove and show hosts. You will have to make sure to issue the `CpMgmt.login()` command before executing the host commands below.
+Currently we provide the ability to add, remove and show hosts. Each successful request will return a CpMgmt.Host struct as `{:ok, %CpMgmt.Host{status: some_status, data: %{returned_data}}}` see documentation for more details.
 
 Add a host
 `CpMgmt.Host.add("some_host_name", "0.0.0.0")`
@@ -47,6 +47,9 @@ Show a host
 
 Delete a host
 `CpMgmt.Host.remove("some_host_name")`
+
+Show all Hosts
+`CpMgmt.Host.show_all()`
 
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)

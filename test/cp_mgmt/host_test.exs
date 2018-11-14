@@ -22,6 +22,12 @@ defmodule CpMgmt.HostTest do
         url: "http://example.com/web_api/show-host"
       } ->
         json(%{name: "test"})
+
+      %{
+        method: :post,
+        url: "http://example.com/web_api/publish"
+      } ->
+        json(%{})
     end)
 
     :ok
@@ -29,7 +35,6 @@ defmodule CpMgmt.HostTest do
 
   test "add host" do
     assert {:ok, resp} = CpMgmt.Host.add("test", "10.1.1.1")
-
     assert resp.status == 200
   end
 

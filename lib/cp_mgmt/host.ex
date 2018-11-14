@@ -2,6 +2,9 @@ defmodule CpMgmt.Host do
   @moduledoc """
   This module manages simple host functions with the Web API
   """
+  defstruct(status: nil, data: %{})
+  alias CpMgmt.Host
+
   use Tesla
 
   plug(Tesla.Middleware.BaseUrl, Application.get_env(:cp_mgmt, :mgmt_server_url))
@@ -14,8 +17,8 @@ defmodule CpMgmt.Host do
   ## Examples
       iex> CpMgmt.Host.add("new_host", "10.1.1.1")
       {:ok,
-        %{
-          body: %{
+        %CpMgmt.Host{
+          data: %{
             "color" => "black",
             "comments" => "",
             "domain" => %{
@@ -26,27 +29,27 @@ defmodule CpMgmt.Host do
             "groups" => [],
             "icon" => "Objects/host",
             "interfaces" => [],
-            "ipv4-address" => "10.1.1.1",
+            "ipv4-address" => "10.1.2.2",
             "meta-info" => %{
               "creation-time" => %{
-                "iso-8601" => "2018-11-13T22:00-0600",
-                "posix" => 1542168053411
+                "iso-8601" => "2018-11-14T09:38-0600",
+                "posix" => 1542209881008
               },
               "creator" => "admin",
               "last-modifier" => "admin",
               "last-modify-time" => %{
-                "iso-8601" => "2018-11-13T22:00-0600",
-                "posix" => 1542168053411
+                "iso-8601" => "2018-11-14T09:38-0600",
+                "posix" => 1542209881008
               },
               "lock" => "unlocked",
               "validation-state" => "ok"
             },
-            "name" => "something",
+            "name" => "new-test-host",
             "nat-settings" => %{"auto-rule" => false},
             "read-only" => true,
             "tags" => [],
             "type" => "host",
-            "uid" => "6375018c-d0da-4556-b010-a0ffb84cfb6c"
+            "uid" => "40155317-2299-4747-8ccf-44f4cdbdc0f1"
           },
           status: 200
         }}
@@ -56,7 +59,10 @@ defmodule CpMgmt.Host do
   """
 
   def add(name, ip_address) do
-    query_filter(post("/web_api/add-host", %{"name" => name, "ip-address" => ip_address}))
+    CpMgmt.logged_in?()
+
+    query_filter(post("/web_api/add-host", %{name: name, "ip-address": ip_address}))
+    |> CpMgmt.publish()
   end
 
   @doc """
@@ -64,19 +70,24 @@ defmodule CpMgmt.Host do
 
   ## Examples
       iex> CpMgmt.Host.remove("new_host")
-      {:ok, %{body: %{"message" => "OK"}, status: 200}}
+      {:ok, %CpMgmt.Host{data: %{"message" => "OK"}, status: 200}}
 
       iex> CpMgmt.Host.remove("new_host")
       {:error, error}
   """
   def remove(name) do
+    CpMgmt.logged_in?()
+
     query_filter(post("/web_api/delete-host", %{name: name}))
+    |> CpMgmt.publish()
   end
 
   @doc """
   Shows a Host and returns same data as adding host
   """
   def show(name) do
+    CpMgmt.logged_in?()
+
     query_filter(post("/web_api/show-host", %{name: name}))
   end
 
@@ -86,8 +97,8 @@ defmodule CpMgmt.Host do
   ## Examples
       iex> CpMgmt.Host.show_hosts()
       {:ok,
-        %{
-          body: %{
+        %CpMgmt.Host{
+          data: %{
             "from" => 1,
             "objects" => [
               %{
@@ -96,10 +107,10 @@ defmodule CpMgmt.Host do
                   "name" => "SMC User",
                   "uid" => "41e821a0-3720-11e3-aa6e-0800200c9fde"
                 },
-                "ipv4-address" => "1.1.1.1",
+                "ipv4-address" => "10.1.1.1",
                 "name" => "blah",
                 "type" => "host",
-                "uid" => "bee96166-0548-4a00-917c-88c4f6bffaee"
+                "uid" => "e63489af-c7a3-4d41-84ba-87748037f590"
               }
             ],
             "to" => 1,
@@ -111,8 +122,17 @@ defmodule CpMgmt.Host do
       iex> CpMgmt.Host.show_hosts()
       {:error, error}
   """
-  def show_hosts(limit \\ 50, offset \\ 0, order \\ []) do
-    query_filter(post("/web_api/show-hosts", %{limit: limit, offset: offset, order: order}))
+  def show_all(limit \\ 50, offset \\ 0, order \\ [], level \\ "standard") do
+    CpMgmt.logged_in?()
+
+    query_filter(
+      post("/web_api/show-hosts", %{
+        limit: limit,
+        offset: offset,
+        order: order,
+        "details-level": level
+      })
+    )
   end
 
   defp query_filter(method) do
@@ -123,7 +143,7 @@ defmodule CpMgmt.Host do
 
         case status do
           200 ->
-            {:ok, %{status: status, body: body}}
+            {:ok, %Host{status: status, data: body}}
 
           _ ->
             {:error, %{status: status, body: body}}

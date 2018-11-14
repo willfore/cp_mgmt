@@ -94,4 +94,34 @@ defmodule CpMgmt do
         {:error, "Logout returned #{error}"}
     end
   end
+
+  @doc """
+  Checks to see if the sid is currently stored. If not, issues login
+  """
+  def logged_in? do
+    case Application.get_env(:cp_mgmt, :sid) do
+      nil ->
+        CpMgmt.login()
+
+      _ ->
+        ""
+    end
+  end
+
+  @doc """
+  Checks to see if the request was successful.
+  If it was publishes changes to the management server. If not does nothing
+  """
+  def publish(response) do
+    sid = Application.get_env(:cp_mgmt, :sid)
+
+    case response do
+      {:ok, _data} ->
+        CpMgmt.logged_in?()
+        post("/web_api/publish", %{}, headers: [{"X-chkp-sid", sid}])
+
+      {:error, _error} ->
+        nil
+    end
+  end
 end
