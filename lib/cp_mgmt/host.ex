@@ -12,7 +12,7 @@ defmodule CpMgmt.Host do
   plug(Tesla.Middleware.JSON)
 
   @doc """
-  Basic host creation via the API.
+  Creates a host via the API.
 
   ## Examples
       iex> CpMgmt.Host.add("new_host", "10.1.1.1")
