@@ -72,11 +72,11 @@ defmodule CpMgmt do
 
   ## Examples
 
-    iex> CpMgmt.logout
-    {:ok, %{body: %{"message" => "OK"}, status: 200}}
+      iex> CpMgmt.logout
+      {:ok, %{body: %{"message" => "OK"}, status: 200}}
 
-    iex> CpMgmt.logout
-    {:error, %{error}}
+      iex> CpMgmt.logout
+      {:error, %{error}}
   """
   def logout do
     sid = Application.get_env(:cp_mgmt, :sid)

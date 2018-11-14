@@ -1,6 +1,6 @@
 # Check Point Management - Elixir
 
-This wrapper makes use of the Check Point Web API available in R80.10 and above. Not all options from the API are available currently but I plan on adding them going forward. 
+This is a very light wrapper to help simplify working with the Check Point Web API in R80.10 and above. Currently  not all options from the API are available but I plan on adding them going forward. 
 
 ## Installation
 
@@ -37,8 +37,16 @@ You can login and out of your management server by using the following:
 
 ## Working with Hosts
 
-Currently we provide the ability to add and remove hosts via the following commands.
+Currently we provide the ability to add, remove and show hosts. You will have to make sure to issue the `CpMgmt.login()` command before executing the host commands below.
 
+Add a host
+`CpMgmt.Host.add("some_host_name", "0.0.0.0")`
+
+Show a host
+`CpMgmt.Host.show("some_host_name")`
+
+Delete a host
+`CpMgmt.Host.remove("some_host_name")`
 
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
