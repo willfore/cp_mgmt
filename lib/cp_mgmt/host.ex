@@ -55,7 +55,7 @@ defmodule CpMgmt.Host do
         }}
 
       iex> CpMgmt.Host.add("new_host", "10.1.1.1")
-      {:error, error}
+      {:error, %Cpmgmt.Host{status: 402, data: %{error_data}}}
   """
 
   def add(name, ip_address) do
@@ -73,7 +73,7 @@ defmodule CpMgmt.Host do
       {:ok, %CpMgmt.Host{data: %{"message" => "OK"}, status: 200}}
 
       iex> CpMgmt.Host.remove("new_host")
-      {:error, error}
+      {:error, %Cpmgmt.Host{status: 402, data: %{error_data}}}
   """
   def remove(name) do
     CpMgmt.logged_in?()
@@ -120,7 +120,7 @@ defmodule CpMgmt.Host do
         }}
 
       iex> CpMgmt.Host.show_hosts()
-      {:error, error}
+      {:error, %Cpmgmt.Host{status: 402, data: %{error_data}}}
   """
   def show_all(limit \\ 50, offset \\ 0, order \\ [], level \\ "standard") do
     CpMgmt.logged_in?()
@@ -146,7 +146,7 @@ defmodule CpMgmt.Host do
             {:ok, %Host{status: status, data: body}}
 
           _ ->
-            {:error, %{status: status, body: body}}
+            {:error, %Host{status: status, data: body}}
         end
 
       {:error, error} ->

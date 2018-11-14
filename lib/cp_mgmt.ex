@@ -116,12 +116,13 @@ defmodule CpMgmt do
     sid = Application.get_env(:cp_mgmt, :sid)
 
     case response do
-      {:ok, _data} ->
+      {:ok, data} ->
         CpMgmt.logged_in?()
         post("/web_api/publish", %{}, headers: [{"X-chkp-sid", sid}])
+        {:ok, data}
 
-      {:error, _error} ->
-        nil
+      {:error, error} ->
+        {:error, error}
     end
   end
 end
