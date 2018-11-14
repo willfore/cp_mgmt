@@ -31,7 +31,8 @@ Note that it is usually a better practice to use env variables in place of stati
 Currently this support the following basic API actions:
 
 - Loging In/Out
-- Working with Hosts
-- Working with Networks
+- Hosts
+- Networks
+- Access Control Layer
 
 Please view the [Documentation](https://hexdocs.pm/cp_mgmt) for usage details and examples.
