@@ -4,6 +4,8 @@
 
 This is a very light wrapper to help simplify working with the Check Point Web API in R80.10 and above. Currently  not all options from the API are available but I plan on adding them going forward. This project depends heavily on [Tesla](https://github.com/teamon/tesla) so you can technically run any Tesla based command inside this project as well. It has been developed using the 1.3 Version of the Check Point Management API. I would recommend using the [API Documentation](https://sc1.checkpoint.com/documents/latest/APIs/index.html#introduction~v1.3%20) as a reference as some of the functions accept an options map. You will need to reference this documentation to discover which options can be passed.
 
+## *Note that this is in very early stages and is being developed on often. I would recommend not running the master branch unless you are willing to expierence outages or behavioral issues.*
+
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
