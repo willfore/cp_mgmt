@@ -2,7 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/willfore/cp_mgmt.svg?style=svg)](https://circleci.com/gh/willfore/cp_mgmt)
 
-This is a very light wrapper to help simplify working with the Check Point Web API in R80.10 and above. Currently  not all options from the API are available but I plan on adding them going forward. 
+This is a very light wrapper to help simplify working with the Check Point Web API in R80.10 and above. Currently  not all options from the API are available but I plan on adding them going forward. This project depends heavily on [Tesla](https://github.com/teamon/tesla) so you can technically run any tesla based command inside this project as well.
 
 ## Installation
 

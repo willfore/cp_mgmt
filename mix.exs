@@ -4,7 +4,7 @@ defmodule CpMgmt.MixProject do
   def project do
     [
       app: :cp_mgmt,
-      version: "0.0.4",
+      version: "0.0.6",
       elixir: "~> 1.7",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
@@ -12,7 +12,11 @@ defmodule CpMgmt.MixProject do
       package: package(),
       deps: deps(),
       name: "Check Point Management API Wrapper - Elixir",
-      source_url: ""
+      source_url: "https://github.com/willfore/cp_mgmt",
+      docs: [
+        main: "readme",
+        extras: ["README.md"]
+      ]
     ]
   end
 
@@ -29,7 +33,7 @@ defmodule CpMgmt.MixProject do
       {:tesla, "~> 1.2.0"},
       {:hackney, "~> 1.14"},
       {:jason, "~> 1.0"},
-      {:ex_doc, "~> 0.14", only: :dev}
+      {:ex_doc, "~> 0.14", only: :dev, runtime: false}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
     ]

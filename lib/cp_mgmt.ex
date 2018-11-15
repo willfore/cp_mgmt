@@ -2,32 +2,35 @@ defmodule CpMgmt do
   @moduledoc """
   This module manages simple functions with the Web API
   """
-  use Tesla
+  @doc false
+  def client(sid) do
+    middleware =
+      case sid do
+        nil ->
+          [
+            {Tesla.Middleware.BaseUrl, Application.get_env(:cp_mgmt, :mgmt_server_url)},
+            Tesla.Middleware.JSON
+          ]
 
-  plug(Tesla.Middleware.BaseUrl, Application.get_env(:cp_mgmt, :mgmt_server_url))
-  plug(Tesla.Middleware.JSON)
+        _ ->
+          [
+            {Tesla.Middleware.BaseUrl, Application.get_env(:cp_mgmt, :mgmt_server_url)},
+            Tesla.Middleware.JSON,
+            {Tesla.Middleware.Headers, [{"X-chkp-sid", sid}]}
+          ]
+      end
+
+    middleware
+    |> Tesla.client()
+  end
 
   @doc """
-  Runs the login function to the management API, sets env for :sid and :uid as well as returning a touple
-  with the status and response. Uses the user and password provided via the config params.
+  Runs the login function to the management API, sets env for :sid and :uid as well and returns sid to be used in the
+  `CpMgmt.logged_in?/0` function. Uses the user and password provided via the config params.
 
   ## Examples
       iex> CpMgmt.login
-      {:ok,
-        %{
-          body: %{
-            "api-server-version" => "1.3",
-            "last-login-was-at" => %{
-              "iso-8601" => "2018-11-13T15:37-0600",
-              "posix" => 1542145054413
-            },
-            "session-timeout" => 600,
-            "sid" => "ZXr5cyMAKb4PK_rozKhcTU7E53Uj80xU3NCr6mEzkaY",
-            "uid" => "b9e0d483-164d-405e-96bd-4932da37d496",
-            "url" => "https://example.com/web_api"
-          },
-          status: 200
-        }}
+      {:ok, "some_sid"}
 
       iex> CpMgmt.login
       {:error,
@@ -44,10 +47,11 @@ defmodule CpMgmt do
 
   """
   def login do
+    client = CpMgmt.client(nil)
     user = Application.get_env(:cp_mgmt, :mgmt_user)
     pass = Application.get_env(:cp_mgmt, :mgmt_pass)
 
-    case post("/web_api/login", %{user: user, password: pass}) do
+    case Tesla.post(client, "/web_api/login", %{user: user, password: pass}) do
       {:ok, response} ->
         %Tesla.Env{body: body} = response
         %Tesla.Env{status: status} = response
@@ -56,7 +60,7 @@ defmodule CpMgmt do
           200 ->
             Application.put_env(:cp_mgmt, :sid, body["sid"], timeout: 600)
             Application.put_env(:cp_mgmt, :uid, body["uid"], timeout: 600)
-            {:ok, %{status: status, body: body}}
+            body["sid"]
 
           _ ->
             {:error, %{status: status, body: body}}
@@ -80,8 +84,9 @@ defmodule CpMgmt do
   """
   def logout do
     sid = Application.get_env(:cp_mgmt, :sid)
+    client = CpMgmt.client(sid)
 
-    case post("/web_api/logout", %{}, headers: [{"X-chkp-sid", sid}]) do
+    case Tesla.post(client, "/web_api/logout", %{}) do
       {:ok, response} ->
         %Tesla.Env{body: body} = response
         %Tesla.Env{status: status} = response
@@ -99,12 +104,16 @@ defmodule CpMgmt do
   Checks to see if the sid is currently stored. If not, issues login
   """
   def logged_in? do
-    case Application.get_env(:cp_mgmt, :sid) do
+    sid = Application.get_env(:cp_mgmt, :sid)
+
+    case sid do
       nil ->
         CpMgmt.login()
+        |> CpMgmt.client()
 
       _ ->
-        ""
+        sid
+        |> CpMgmt.client()
     end
   end
 
@@ -114,15 +123,46 @@ defmodule CpMgmt do
   """
   def publish(response) do
     sid = Application.get_env(:cp_mgmt, :sid)
+    client = CpMgmt.client(sid)
 
     case response do
       {:ok, data} ->
         CpMgmt.logged_in?()
-        post("/web_api/publish", %{}, headers: [{"X-chkp-sid", sid}])
+        Tesla.post(client, "/web_api/publish", %{})
         {:ok, data}
 
       {:error, error} ->
         {:error, error}
     end
+  end
+
+  @doc """
+  Transforms the Tesla response to a filtered version for use with `CpMgmt.to_struct/1`
+  """
+  def transform_response(response) do
+    case response do
+      {:ok, data} ->
+        %Tesla.Env{body: body} = data
+        %Tesla.Env{status: status} = data
+
+        case status do
+          200 ->
+            {:ok, %{status: status, data: body}}
+
+          _ ->
+            {:error, %{status: status, data: body}}
+        end
+
+      {:error, error} ->
+        {:error, error}
+    end
+  end
+
+  @doc """
+  Takes `CpMgmt.transform_response/1` and the given struct, then converts it to the struct for the calling module
+  """
+  def to_struct(data, module_struct) do
+    {answer, map} = data
+    {answer, struct(module_struct, data: map.data, status: map.status)}
   end
 end

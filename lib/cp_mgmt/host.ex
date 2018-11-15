@@ -2,14 +2,8 @@ defmodule CpMgmt.Host do
   @moduledoc """
   This module manages simple host functions with the Web API
   """
-  defstruct(status: nil, data: %{})
   alias CpMgmt.Host
-
-  use Tesla
-
-  plug(Tesla.Middleware.BaseUrl, Application.get_env(:cp_mgmt, :mgmt_server_url))
-  plug(Tesla.Middleware.Headers, [{"X-chkp-sid", Application.get_env(:cp_mgmt, :sid)}])
-  plug(Tesla.Middleware.JSON)
+  defstruct(status: nil, data: %{})
 
   @doc """
   Creates a host via the API.
@@ -60,8 +54,9 @@ defmodule CpMgmt.Host do
 
   def add(name, ip_address) do
     CpMgmt.logged_in?()
-
-    query_filter(post("/web_api/add-host", %{name: name, "ip-address": ip_address}))
+    |> Tesla.post("/web_api/add-host", %{name: name, "ip-address": ip_address})
+    |> CpMgmt.transform_response()
+    |> CpMgmt.to_struct(%Host{})
     |> CpMgmt.publish()
   end
 
@@ -77,8 +72,9 @@ defmodule CpMgmt.Host do
   """
   def remove(name) do
     CpMgmt.logged_in?()
-
-    query_filter(post("/web_api/delete-host", %{name: name}))
+    |> Tesla.post("/web_api/delete-host", %{name: name})
+    |> CpMgmt.transform_response()
+    |> CpMgmt.to_struct(%Host{})
     |> CpMgmt.publish()
   end
 
@@ -87,8 +83,9 @@ defmodule CpMgmt.Host do
   """
   def show(name) do
     CpMgmt.logged_in?()
-
-    query_filter(post("/web_api/show-host", %{name: name}))
+    |> Tesla.post("/web_api/show-host", %{name: name})
+    |> CpMgmt.transform_response()
+    |> CpMgmt.to_struct(%Host{})
   end
 
   @doc """
@@ -124,33 +121,13 @@ defmodule CpMgmt.Host do
   """
   def show_all(limit \\ 50, offset \\ 0, order \\ [], level \\ "standard") do
     CpMgmt.logged_in?()
-
-    query_filter(
-      post("/web_api/show-hosts", %{
-        limit: limit,
-        offset: offset,
-        order: order,
-        "details-level": level
-      })
-    )
-  end
-
-  defp query_filter(method) do
-    case method do
-      {:ok, response} ->
-        %Tesla.Env{body: body} = response
-        %Tesla.Env{status: status} = response
-
-        case status do
-          200 ->
-            {:ok, %Host{status: status, data: body}}
-
-          _ ->
-            {:error, %Host{status: status, data: body}}
-        end
-
-      {:error, error} ->
-        {:error, "Adding a host returned a #{error}"}
-    end
+    |> Tesla.post("/web_api/show-hosts", %{
+      limit: limit,
+      offset: offset,
+      order: order,
+      "details-level": level
+    })
+    |> CpMgmt.transform_response()
+    |> CpMgmt.to_struct(%Host{})
   end
 end

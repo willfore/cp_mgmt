@@ -6,11 +6,11 @@ defmodule CpMgmt.Network do
   defstruct(status: nil, data: %{})
   alias CpMgmt.Network
 
-  use Tesla
+  # use Tesla
 
-  plug(Tesla.Middleware.BaseUrl, Application.get_env(:cp_mgmt, :mgmt_server_url))
-  plug(Tesla.Middleware.Headers, [{"X-chkp-sid", Application.get_env(:cp_mgmt, :sid)}])
-  plug(Tesla.Middleware.JSON)
+  # plug(Tesla.Middleware.BaseUrl, Application.get_env(:cp_mgmt, :mgmt_server_url))
+  # plug(Tesla.Middleware.Headers, [{"X-chkp-sid", Application.get_env(:cp_mgmt, :sid)}])
+  # plug(Tesla.Middleware.JSON)
 
   @doc """
   Creates a Network via the API
@@ -62,14 +62,13 @@ defmodule CpMgmt.Network do
 
   def add(name, subnet, subnet_mask) do
     CpMgmt.logged_in?()
-
-    query_filter(
-      post("/web_api/add-network", %{
-        name: name,
-        subnet: subnet,
-        "subnet-mask": subnet_mask
-      })
-    )
+    |> Tesla.post("/web_api/add-network", %{
+      name: name,
+      subnet: subnet,
+      "subnet-mask": subnet_mask
+    })
+    |> CpMgmt.transform_response()
+    |> CpMgmt.to_struct(%Network{})
     |> CpMgmt.publish()
   end
 
@@ -86,8 +85,9 @@ defmodule CpMgmt.Network do
 
   def remove(name) do
     CpMgmt.logged_in?()
-
-    query_filter(post("/web_api/delete-network", %{name: name}))
+    |> Tesla.post("/web_api/delete-network", %{name: name})
+    |> CpMgmt.transform_response()
+    |> CpMgmt.to_struct(%Network{})
     |> CpMgmt.publish()
   end
 
@@ -142,8 +142,9 @@ defmodule CpMgmt.Network do
   """
   def show(name) do
     CpMgmt.logged_in?()
-
-    query_filter(post("/web_api/show-network", %{name: name}))
+    |> Tesla.post("/web_api/show-network", %{name: name})
+    |> CpMgmt.transform_response()
+    |> CpMgmt.to_struct(%Network{})
   end
 
   @doc """
@@ -151,26 +152,8 @@ defmodule CpMgmt.Network do
   """
   def show_all do
     CpMgmt.logged_in?()
-
-    query_filter(post("/web_api/show-networks", %{}))
-  end
-
-  defp query_filter(method) do
-    case method do
-      {:ok, response} ->
-        %Tesla.Env{body: body} = response
-        %Tesla.Env{status: status} = response
-
-        case status do
-          200 ->
-            {:ok, %Network{status: status, data: body}}
-
-          _ ->
-            {:error, %Network{status: status, data: body}}
-        end
-
-      {:error, error} ->
-        {:error, "Adding a host returned a #{error}"}
-    end
+    |> Tesla.post("/web_api/show-networks", %{})
+    |> CpMgmt.transform_response()
+    |> CpMgmt.to_struct(%Network{})
   end
 end
