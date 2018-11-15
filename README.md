@@ -22,7 +22,7 @@ end
 Specify the following in your `config/config.exs` or `config/<env>.exs` config file:
 
 ```elixir
-config :cp_mgmt, mgmt_server_url: "https://some.ip.address:443"
+config :cp_mgmt, mgmt_server_url: "https://some.ip.address"
 config :cp_mgmt, mgmt_user: "<username>"
 config :cp_mgmt, mgmt_pass: "<user_password>"
 ```
@@ -33,6 +33,7 @@ Currently this support the following basic API actions:
 - Loging In/Out
 - Hosts
 - Networks
-- Access Control Layer
+- Access Layer
+- Access Rules
 
 Please view the [Documentation](https://hexdocs.pm/cp_mgmt) for usage details and examples.
