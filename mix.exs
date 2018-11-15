@@ -47,7 +47,7 @@ defmodule CpMgmt.MixProject do
     [
       organization: "Check Point Software Technologies LTD.",
       licenses: ["Apache 2.0"],
-      links: %{"GitHub" => ""}
+      links: %{"GitHub" => "https://github.com/willfore/cp_mgmt"}
     ]
   end
 end
