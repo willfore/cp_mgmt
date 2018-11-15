@@ -165,4 +165,38 @@ defmodule CpMgmt do
     {answer, map} = data
     {answer, struct(module_struct, data: map.data, status: map.status)}
   end
+
+  @doc """
+  Installs the specified policy package on the specified gateway or gatewayas.
+
+  ## Examples
+      Specifing a single gateway to install on.
+      iex> CpMgmt.install_policy("policy-package-name", "someGW")
+
+      You can also specify a list of gateways to install on
+      iex> CpMgmt.install_policy("policy-package-name", ["someGW", "someOtherGW", "yetAnotherGW"])
+
+      iex> CpMgmt.install_policy("policy-package-name", "someGW")
+      {:error, %{error}}
+  """
+  def install_policy(package, gateways) do
+    CpMgmt.logged_in?()
+    |> Tesla.post("/web_api/install-policy", %{"policy-package": package, targets: gateways})
+    |> CpMgmt.transform_response()
+  end
+
+  @doc """
+  Runs verification on the specified policy package.
+
+  ## Examples
+      iex> CpMgmt.verify_policy("policy-package-name")
+
+      iex> CpMgmt.verify_policy("policy-package-name")
+      {:error, %{error}}
+  """
+  def verify_policy(package) do
+    CpMgmt.logged_in?()
+    |> Tesla.post("/web_api/verify-policy", %{"policy-package": package})
+    |> CpMgmt.transform_response()
+  end
 end

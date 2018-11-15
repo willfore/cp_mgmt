@@ -9,7 +9,7 @@ defmodule CpMgmt.AccessRuleTest do
         method: :post,
         url: "http://example.com/web_api/add-access-rule"
       } ->
-        json(%{})
+        json(%{layer: 1, position: 2})
 
       %{
         method: :post,
@@ -40,22 +40,22 @@ defmodule CpMgmt.AccessRuleTest do
   end
 
   test "adds access rule" do
-    assert {:ok, resp} = CpMgmt.AccessRule.add()
+    assert {:ok, resp} = CpMgmt.AccessRule.add(1, 2)
     assert resp.status == 200
   end
 
   test "removes access rule" do
-    assert {:ok, resp} = CpMgmt.AccessRule.remove()
+    assert {:ok, resp} = CpMgmt.AccessRule.remove(1, "some-layer")
     assert resp.status == 200
   end
 
   test "shows access rule" do
-    assert {:ok, resp} = CpMgmt.AccessRule.show()
+    assert {:ok, resp} = CpMgmt.AccessRule.show(5, "some-layer")
     assert resp.status == 200
   end
 
   test "shows all access rulebase" do
-    assert {:ok, resp} = CpMgmt.AccessRule.show_rulebase()
+    assert {:ok, resp} = CpMgmt.AccessRule.show_rulebase("some-layer")
     assert resp.status == 200
   end
 end
