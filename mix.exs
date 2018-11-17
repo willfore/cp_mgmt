@@ -4,7 +4,7 @@ defmodule CpMgmt.MixProject do
   def project do
     [
       app: :cp_mgmt,
-      version: "1.0.0-rc0",
+      version: "1.0.0-rc1",
       elixir: "~> 1.7",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
@@ -45,7 +45,6 @@ defmodule CpMgmt.MixProject do
 
   defp package() do
     [
-      organization: "Check Point Software Technologies LTD.",
       licenses: ["Apache 2.0"],
       links: %{"GitHub" => "https://github.com/willfore/cp_mgmt"}
     ]

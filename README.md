@@ -28,16 +28,33 @@ config :cp_mgmt, mgmt_server_url: "https://some.ip.address"
 config :cp_mgmt, mgmt_user: "<username>"
 config :cp_mgmt, mgmt_pass: "<user_password>"
 ```
-Note that it is usually a better practice to use env variables in place of staticly coding passwords via `System.get_env`.
+Note that it is usually a better practice to use env variables in place of staticly coding passwords via `config.exs`.
 
 Currently this support the following basic API actions:
 
-- Loging In/Out
-- Hosts
-- Networks
-- Access Layer
-- Access Rules
-- Verify Policy
-- Install Policy
+- Loging In/Out (This is automatic)
+- Hosts `CpMgmt.Host`
+- Networks `CpMgmt.Network`
+- Access Layer `CpMgmt.AccessLayer`
+- Access Rules `CpMgmt.AccessRule`
+- Verify Policy `CpMgmt.verify_policy`
+- Install Policy `CpMgmt.install_policy`
+
+## Basic Usage
+
+All requests will return a struct with the function status as well as the data returned from the API server and its web API status:
+
+Successful Request:
+
+`{:ok, %CpMgmt.Host{data: %{request_data}, status: 200}`
+
+Failed Request:
+
+`{:error, %Cpmgmt.Host{status: 402, data: %{error_data}}}`
+
+Each Module has the same naming convention to make usage easy. The [Documentation](https://hexdocs.pm/cp_mgmt) is pretty thorough at this point with examples of each function and its return. Below is an example of adding a host.
+
+`CpMgmt.Host.add("test-host", "1.1.1.1")`
+
 
 Please view the [Documentation](https://hexdocs.pm/cp_mgmt) for usage details and examples.
