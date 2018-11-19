@@ -30,7 +30,7 @@ config :cp_mgmt, mgmt_pass: "<user_password>"
 ```
 Note that it is usually a better practice to use env variables in place of staticly coding passwords via `config.exs`.
 
-Currently this support the following basic API actions:
+Currently this supports the following basic API actions:
 
 - Loging In/Out (This is automatic)
 - Hosts `CpMgmt.Host`
