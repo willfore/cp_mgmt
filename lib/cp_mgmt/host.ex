@@ -9,7 +9,7 @@ defmodule CpMgmt.Host do
   Creates a host via the API.
 
   ## Examples
-      iex> CpMgmt.Host.add("new_host", "10.1.1.1")
+      iex> CpMgmt.Host.add("new_host", "10.1.1.1", ["nat-settings": %{"auto-rule": true}])
       {:ok,
         %CpMgmt.Host{
           data: %{
@@ -52,9 +52,11 @@ defmodule CpMgmt.Host do
       {:error, %Cpmgmt.Host{status: 402, data: %{error_data}}}
   """
 
-  def add(name, ip_address) do
+  def add(name, ip_address, options \\ []) do
+    params = Enum.into(options, %{name: name, "ip-address": ip_address})
+
     CpMgmt.logged_in?()
-    |> Tesla.post("/web_api/add-host", %{name: name, "ip-address": ip_address})
+    |> Tesla.post("/web_api/add-host", params)
     |> CpMgmt.transform_response()
     |> CpMgmt.to_struct(%Host{})
     |> CpMgmt.publish()

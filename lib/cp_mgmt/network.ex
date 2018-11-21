@@ -16,7 +16,7 @@ defmodule CpMgmt.Network do
   Creates a Network via the API
 
   ## Examples
-      iex> CpMgmt.Network.add("some-network", "10.0.0.0", "255.255.255.0")
+      iex> CpMgmt.Network.add("some-network", "10.0.0.0", "255.255.255.0", ["nat-settings": %{"auto-rule": true}])
       {:ok,
         %CpMgmt.Network{
           data: %{
@@ -60,13 +60,11 @@ defmodule CpMgmt.Network do
       {:error, %Cpmgmt.Nework{status: 402, data: %{error_data}}}
   """
 
-  def add(name, subnet, subnet_mask) do
+  def add(name, subnet, subnet_mask, options \\ []) do
+    params = Enum.into(options, %{name: name, subnet: subnet, "subnet-mask": subnet_mask})
+
     CpMgmt.logged_in?()
-    |> Tesla.post("/web_api/add-network", %{
-      name: name,
-      subnet: subnet,
-      "subnet-mask": subnet_mask
-    })
+    |> Tesla.post("/web_api/add-network", params)
     |> CpMgmt.transform_response()
     |> CpMgmt.to_struct(%Network{})
     |> CpMgmt.publish()

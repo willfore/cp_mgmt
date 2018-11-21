@@ -9,7 +9,7 @@ defmodule CpMgmt.AccessLayer do
   Creates an Access Layer via the API
 
   ## Examples
-      iex> CpMgmt.AccessLayer.add("some-layer-name")
+      iex> CpMgmt.AccessLayer.add("some-layer-name", ["add-default-rule": true])
       {:ok,
       %CpMgmt.AccessLayer{
         data: %{
@@ -53,9 +53,11 @@ defmodule CpMgmt.AccessLayer do
       iex> CpMgmt.AccessLayer.add("some-layer-name")
       {:error, %Cpmgmt.AccessLayer{status: 402, data: %{error_data}}}
   """
-  def add(name) do
+  def add(name, options \\ []) do
+    params = Enum.into(options, %{name: name})
+
     CpMgmt.logged_in?()
-    |> Tesla.post("/web_api/add-access-layer", %{name: name})
+    |> Tesla.post("/web_api/add-access-layer", params)
     |> CpMgmt.transform_response()
     |> CpMgmt.to_struct(%AccessLayer{})
     |> CpMgmt.publish()
