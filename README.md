@@ -51,7 +51,6 @@ Successful Request:
 Failed Request:
 
 `{:error, %Cpmgmt.Host{status: 402, data: %{error_data}}}`
-
 Each Module has the same naming convention to make usage easy. The [Documentation](https://hexdocs.pm/cp_mgmt) is pretty thorough at this point with examples of each function and its return. Below is an example of adding a host.
 
 `CpMgmt.Host.add("test-host", "1.1.1.1")`
