@@ -12,6 +12,16 @@ defmodule CpMgmt do
             Tesla.Middleware.JSON
           ]
 
+        {:error, error} ->
+          [
+            {Tesla.Middleware.BaseUrl, Application.get_env(:cp_mgmt, :mgmt_server_url)}
+          ]
+
+          IO.write(
+            :stderr,
+            "The server issued the following error on login: #{error.body["message"]}"
+          )
+
         _ ->
           [
             {Tesla.Middleware.BaseUrl, Application.get_env(:cp_mgmt, :mgmt_server_url)},

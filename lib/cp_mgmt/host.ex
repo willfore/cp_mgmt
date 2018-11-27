@@ -94,7 +94,7 @@ defmodule CpMgmt.Host do
   Shows all hosts.
 
   ## Examples
-      iex> CpMgmt.Host.show_hosts()
+      iex> CpMgmt.Host.show_all()
       {:ok,
         %CpMgmt.Host{
           data: %{
@@ -118,7 +118,7 @@ defmodule CpMgmt.Host do
           status: 200
         }}
 
-      iex> CpMgmt.Host.show_hosts()
+      iex> CpMgmt.Host.show_all()
       {:error, %Cpmgmt.Host{status: 402, data: %{error_data}}}
   """
   def show_all(limit \\ 50, offset \\ 0, order \\ [], level \\ "standard") do
