@@ -66,7 +66,7 @@ defmodule CpMgmt.Host do
   Adds a Host without publishing. Useful if you are adding hosts in bulk
   """
 
-  def add(name, ip_address, options, false) do
+  def add(name, ip_address, options, :no_publish) do
     params = Enum.into(options, %{name: name, "ip-address": ip_address})
 
     CpMgmt.logged_in?()
