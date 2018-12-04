@@ -63,6 +63,19 @@ defmodule CpMgmt.Host do
   end
 
   @doc """
+  Adds a Host without publishing. Useful if you are adding hosts in bulk
+  """
+
+  def add(name, ip_address, options, false) do
+    params = Enum.into(options, %{name: name, "ip-address": ip_address})
+
+    CpMgmt.logged_in?()
+    |> Tesla.post("/web_api/add-host", params)
+    |> CpMgmt.transform_response()
+    |> CpMgmt.to_struct(%Host{})
+  end
+
+  @doc """
   Removes a Host
 
   ## Examples
