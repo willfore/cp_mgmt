@@ -174,6 +174,18 @@ defmodule CpMgmt.AccessRule do
   end
 
   @doc """
+  Adds a rule without publishing. Useful if you are adding rules in bulk.
+  """
+  def add(layer, position, options, :no_publish) do
+    params = Enum.into(options, %{layer: layer, position: position})
+
+    CpMgmt.logged_in?()
+    |> Tesla.post("/web_api/add-access-rule", params)
+    |> CpMgmt.transform_response()
+    |> CpMgmt.to_struct(%AccessRule{})
+  end
+
+  @doc """
   Removes an Access rule form the rulebase.
 
   ## Examples
@@ -189,6 +201,16 @@ defmodule CpMgmt.AccessRule do
     |> CpMgmt.transform_response()
     |> CpMgmt.to_struct(%AccessRule{})
     |> CpMgmt.publish()
+  end
+
+  @doc """
+  Removes an Access rule from the rulebase without publishing. Useful if you are removing rules in bulk.
+  """
+  def remove(rule_number, layer, :no_publish) do
+    CpMgmt.logged_in?()
+    |> Tesla.post("/web_api/delete-access-rule", %{"rule-number": rule_number, layer: layer})
+    |> CpMgmt.transform_response()
+    |> CpMgmt.to_struct(%AccessRule{})
   end
 
   @doc """
