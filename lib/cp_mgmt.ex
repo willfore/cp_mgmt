@@ -239,4 +239,44 @@ defmodule CpMgmt do
     |> Tesla.post("/web_api/show-object", %{uid: uid})
     |> CpMgmt.transform_response()
   end
+
+  @doc """
+  Shows all objects
+
+  ## Examples
+      iex> CpMgmt.show_object(uid)
+      {:ok,
+        %{
+          "from" => 1,
+          "objects" => [
+            %{
+              "domain" => %{
+                "domain-type" => "data domain",
+                "name" => "APPI Data",
+                "uid" => "8bf4ac51-2df7-40e1-9bce-bedbedbedbed"
+              },
+              "name" => "#hashtags",
+              "type" => "application-site",
+              "uid" => "00fa9e3c-36ef-0f65-e053-08241dc22da2"
+            },
+            %{
+              "domain" => %{
+                "domain-type" => "data domain",
+                "name" => "APPI Data",
+                "uid" => "8bf4ac51-2df7-40e1-9bce-bedbedbedbed"
+              },
+              "name" => "050 Plus",
+              "type" => "application-site",
+              "uid" => "00fa9e44-4035-0f65-e053-08241dc22da2"
+            }
+          status: 200
+        }}
+      iex> CpMgmt.show_objects()
+      {:error, %{error}}
+  """
+  def show_objects(limit \\ 50, offset \\ 0) do
+    CpMgmt.logged_in?()
+    |> Tesla.post("/web_api/show-objects", %{limit: limit, offset: offset})
+    |> CpMgmt.transform_response()
+  end
 end
