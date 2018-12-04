@@ -94,6 +94,17 @@ defmodule CpMgmt.Host do
   end
 
   @doc """
+  Removes a Host without publishing. Useful if you are removing hosts in bulk.
+  """
+  def remove(name, :no_publish) do
+    CpMgmt.logged_in?()
+    |> Tesla.post("/web_api/delete-host", %{name: name})
+    |> CpMgmt.transform_response()
+    |> CpMgmt.to_struct(%Host{})
+    |> CpMgmt.publish()
+  end
+
+  @doc """
   Shows a Host and returns same data as adding host
   """
   def show(name) do
