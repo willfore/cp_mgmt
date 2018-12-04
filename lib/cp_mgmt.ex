@@ -209,4 +209,34 @@ defmodule CpMgmt do
     |> Tesla.post("/web_api/verify-policy", %{"policy-package": package})
     |> CpMgmt.transform_response()
   end
+
+  @doc """
+  Shows an object by it's uid
+
+  ## Examples
+      iex> CpMgmt.show_object(uid)
+      {:ok,
+        %{
+          data: %{
+            "object" => %{
+              "domain" => %{
+                "domain-type" => "data domain",
+                "name" => "Check Point Data",
+                "uid" => "a0bbbc99-adef-4ef8-bb6d-defdefdefdef"
+              },
+              "name" => "Any",
+              "type" => "CpmiAnyObject",
+              "uid" => "97aeb369-9aea-11d5-bd16-0090272ccb30"
+            }
+          },
+          status: 200
+        }}
+      iex> CpMgmt.show_object(uid)
+      {:error, %{error}}
+  """
+  def show_object(uid) do
+    CpMgmt.logged_in?()
+    |> Tesla.post("/web_api/show-object", %{uid: uid})
+    |> CpMgmt.transform_response()
+  end
 end
