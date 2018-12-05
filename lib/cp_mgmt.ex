@@ -280,4 +280,22 @@ defmodule CpMgmt do
     |> Tesla.post("/web_api/show-objects", %{limit: limit, offset: offset})
     |> CpMgmt.transform_response()
   end
+
+  @doc """
+  Shows all session from management server
+  """
+  def show_sessions(limit \\ 50, offset \\ 0) do
+    CpMgmt.logged_in?()
+    |> Tesla.post("/web_api/show-sessions", %{limit: limit, offset: offset})
+    |> CpMgmt.transform_response()
+  end
+
+  @doc """
+  Shows the session specified by it's uid
+  """
+  def show_session(uid) do
+    CpMgmt.logged_in?()
+    |> Tesla.post("/web_api/show-sessions", %{uid: uid})
+    |> CpMgmt.transform_response()
+  end
 end
