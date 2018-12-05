@@ -27,8 +27,9 @@ Specify the following in your `config/config.exs` or `config/<env>.exs` config f
 config :cp_mgmt, mgmt_server_url: "https://some.ip.address"
 config :cp_mgmt, mgmt_user: "<username>"
 config :cp_mgmt, mgmt_pass: "<user_password>"
+config :cp_mgmt, mgmt_domain: "<domain_name_on_mds>"
 ```
-Note that it is usually a better practice to use env variables in place of staticly coding passwords via `config.exs`.
+Note that it is usually a better practice to use env variables in place of staticly coding passwords via `config.exs`. If you are not using an MDS simply set mgmt_domain to nil.
 
 Currently this supports the following basic API actions:
 

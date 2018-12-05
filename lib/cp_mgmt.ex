@@ -60,8 +60,9 @@ defmodule CpMgmt do
     client = CpMgmt.client(nil)
     user = Application.get_env(:cp_mgmt, :mgmt_user)
     pass = Application.get_env(:cp_mgmt, :mgmt_pass)
+    domain = Application.get_env(:cp_mgmt, :mgmt_domain)
 
-    case Tesla.post(client, "/web_api/login", %{user: user, password: pass}) do
+    case Tesla.post(client, "/web_api/login", %{user: user, password: pass, domain: domain}) do
       {:ok, response} ->
         %Tesla.Env{body: body} = response
         %Tesla.Env{status: status} = response
